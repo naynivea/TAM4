@@ -29,7 +29,7 @@ public class TableroPartida extends JFrame {
     private JRadioButton rdbtnCpu_1;
     private JRadioButton rdbtnNewRadioButton_1;
 	private ButtonGroup groupPlayer2;
-
+	private JButton btnNewButton;
 
     private JButton[] buttons;
     
@@ -128,6 +128,11 @@ public class TableroPartida extends JFrame {
         groupPlayer2 = new ButtonGroup();
         groupPlayer2.add(rdbtnNewRadioButton_1);
         groupPlayer2.add(rdbtnCpu_1);
+        
+        btnNewButton = new JButton("Nueva Partida");
+        btnNewButton.setBounds(530, 25, 120, 26);
+		btnNewButton.addActionListener(nuevaPartida);
+        contentPane.add(btnNewButton);
     }
 
     private void onButtonClick(ActionEvent e) {
