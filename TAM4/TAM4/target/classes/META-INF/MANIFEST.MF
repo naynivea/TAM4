@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: Maycon
-Build-Jdk: 19
+Built-By: VersusPC
+Build-Jdk: 17.0.7
 Created-By: Maven Integration for Eclipse
 
