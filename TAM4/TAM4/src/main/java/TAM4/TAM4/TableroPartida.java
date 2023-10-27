@@ -32,10 +32,16 @@ public class TableroPartida extends JFrame {
 
 
     private JButton[] buttons;
+    
+    JRadioButton[] rdnButtonsPlayer1;
+    JRadioButton[] rdnButtonsPlayer2;    
     private Tablero tablero = new Tablero();
     private String currentPlayer = ""; // Jugador 1 inicia
 	private boolean turno_jugador_1 = true;
 
+    private boolean partidaEnCurso = false;
+    private String player1 = "";
+    private String player2 = "";
 
 	private ArrayList<ArrayList<Integer>> posiciones_jugador_1 = new ArrayList<ArrayList<Integer>>();
 	private ArrayList<ArrayList<Integer>> posiciones_jugador_2 = new ArrayList<ArrayList<Integer>>();
@@ -126,8 +132,10 @@ public class TableroPartida extends JFrame {
 
     private void onButtonClick(ActionEvent e) {
         JButton button = (JButton) e.getSource();
-        if (button.getText().isEmpty()) {
-            //button.setText(currentPlayer);
+        
+        if (button.getText().isEmpty() && partidaEnCurso) {
+        	String sign = (currentPlayer.equals(player1)) ? "X" : "O";
+            button.setText(sign);
             int index = -1;
             for (int i = 0; i < 9; i++) {
                 if (button == buttons[i]) {
@@ -137,8 +145,7 @@ public class TableroPartida extends JFrame {
             }
             int row = index / 3;
             int col = index % 3;
-            //tablero.insertarMovimiento(row, col, currentPlayer);
-            insertar(row, col, button);
+            tablero.insertarMovimiento(row, col, sign);
             
             if (tablero.comprobarTablero()) {
                 JOptionPane.showMessageDialog(this, "¡Jugador " + currentPlayer + " gana!");
@@ -158,6 +165,19 @@ public class TableroPartida extends JFrame {
         }
     }
 
+    ActionListener nuevaPartida = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			
+			if(comprobarInicioPartida() && !partidaEnCurso) {
+				player1 = textField.getText();
+				currentPlayer = player1;
+				player2 = textField_1.getText();
+				partidaEnCurso = true;
+			}
+		}
+	};
+    
+    
     private void resetGame() {
         for (JButton button : buttons) {
             button.setText("");
@@ -228,4 +248,27 @@ public class TableroPartida extends JFrame {
 			//System.out.println(tablero.comprobarTablero());
 		}
 	}
+    
+    private boolean comprobarInicioPartida() {
+    	
+		if(!textField.getText().equals("") && !textField_1.getText().equals("")) {
+			
+			if((groupPlayer1.getSelection() != null)&&(groupPlayer2.getSelection() != null)) {
+				
+				if(rdbtnCpu.isSelected() && rdbtnCpu_1.isSelected()) {
+					lblNewLabel.setText("Ambos jugadores no pueden ser del tipo CPU");
+					return false;
+				}else {
+					return true;
+				}
+			}else {
+				lblNewLabel.setText("Introduce primero el tipo de cada jugador");
+				return false;
+			}
+		}else {
+			lblNewLabel.setText("Introduce primero los nombres de los jugadores");
+			return false;
+		}
+    }
 }
+
