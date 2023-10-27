@@ -145,8 +145,7 @@ public class TableroPartida extends JFrame {
             }
             int row = index / 3;
             int col = index % 3;
-            //tablero.insertarMovimiento(row, col, currentPlayer);
-            //insertarMovimiento(row, col, sign);
+            tablero.insertarMovimiento(row, col, sign);
             
             if (tablero.comprobarTablero()) {
                 JOptionPane.showMessageDialog(this, "¡Jugador " + currentPlayer + " gana!");
