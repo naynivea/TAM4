@@ -5,28 +5,44 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JRadioButton;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TableroPartida extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
+    private JLabel lblNewLabel;
     private JTextField textField;
     private JTextField textField_1;
     private JRadioButton rdbtnNewRadioButton;
     private JRadioButton rdbtnCpu;
+	private ButtonGroup groupPlayer1;
     private JRadioButton rdbtnCpu_1;
     private JRadioButton rdbtnNewRadioButton_1;
+	private ButtonGroup groupPlayer2;
+
 
     private JButton[] buttons;
     private Tablero tablero = new Tablero();
-    private String currentPlayer = "X"; // Jugador 1 inicia
+    private String currentPlayer = ""; // Jugador 1 inicia
+	private boolean turno_jugador_1 = true;
+
+
+	private ArrayList<ArrayList<Integer>> posiciones_jugador_1 = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<ArrayList<Integer>> posiciones_jugador_2 = new ArrayList<ArrayList<Integer>>();
+	private ArrayList<JButton> botones_jugador_1 = new ArrayList<JButton>();
+	private ArrayList<JButton> botones_jugador_2 = new ArrayList<JButton>();
+
+	private final int FICHAS_MAXIMAS = 3;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -69,7 +85,7 @@ public class TableroPartida extends JFrame {
             }
         }
 
-        JLabel lblNewLabel = new JLabel("Turno de " + currentPlayer);
+        lblNewLabel = new JLabel("Turno de " + currentPlayer);
         lblNewLabel.setBounds(450, 50, 200, 14);
         contentPane.add(lblNewLabel);
 
@@ -90,6 +106,10 @@ public class TableroPartida extends JFrame {
         rdbtnCpu = new JRadioButton("CPU");
         rdbtnCpu.setBounds(590, 180, 109, 23);
         contentPane.add(rdbtnCpu);
+        
+        groupPlayer1 = new ButtonGroup();
+        groupPlayer1.add(rdbtnNewRadioButton);
+        groupPlayer1.add(rdbtnCpu);
 
         rdbtnNewRadioButton_1 = new JRadioButton("Humano");
         rdbtnNewRadioButton_1.setBounds(470, 350, 109, 23);
@@ -98,12 +118,16 @@ public class TableroPartida extends JFrame {
         rdbtnCpu_1 = new JRadioButton("CPU");
         rdbtnCpu_1.setBounds(590, 350, 109, 23);
         contentPane.add(rdbtnCpu_1);
+        
+        groupPlayer2 = new ButtonGroup();
+        groupPlayer2.add(rdbtnNewRadioButton_1);
+        groupPlayer2.add(rdbtnCpu_1);
     }
 
     private void onButtonClick(ActionEvent e) {
         JButton button = (JButton) e.getSource();
         if (button.getText().isEmpty()) {
-            button.setText(currentPlayer);
+            //button.setText(currentPlayer);
             int index = -1;
             for (int i = 0; i < 9; i++) {
                 if (button == buttons[i]) {
@@ -113,8 +137,9 @@ public class TableroPartida extends JFrame {
             }
             int row = index / 3;
             int col = index % 3;
-            tablero.insertarMovimiento(row, col, currentPlayer);
-
+            //tablero.insertarMovimiento(row, col, currentPlayer);
+            insertar(row, col, button);
+            
             if (tablero.comprobarTablero()) {
                 JOptionPane.showMessageDialog(this, "¡Jugador " + currentPlayer + " gana!");
                 resetGame();
@@ -122,8 +147,8 @@ public class TableroPartida extends JFrame {
                 JOptionPane.showMessageDialog(this, "¡Empate!");
                 resetGame();
             } else {
-                currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
-                JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
+                //currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
+                //JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
                 lblNewLabel.setText("Turno de " + currentPlayer);
                 if (rdbtnCpu.isSelected() && currentPlayer.equals("O")) {
                     // Turno de la IA
@@ -138,8 +163,8 @@ public class TableroPartida extends JFrame {
             button.setText("");
         }
         tablero.reiniciarTablero();
-        currentPlayer = "X";
-        JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
+        currentPlayer = "";
+        //JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
         lblNewLabel.setText("Turno de " + currentPlayer);
     }
 
@@ -149,12 +174,13 @@ public class TableroPartida extends JFrame {
         do {
             index = random.nextInt(9);
         } while (!buttons[index].getText().isEmpty());
-        buttons[index].setText("O");
+        //buttons[index].setText("O");
 
         int row = index / 3;
         int col = index % 3;
-        tablero.insertarMovimiento(row, col, "O");
-
+        //tablero.insertarMovimiento(row, col, "O");
+        insertar(row, col, buttons[index]);
+        
         if (tablero.comprobarTablero()) {
             JOptionPane.showMessageDialog(this, "La IA gana!");
             resetGame();
@@ -162,9 +188,44 @@ public class TableroPartida extends JFrame {
             JOptionPane.showMessageDialog(this, "Empate!");
             resetGame();
         } else {
-            currentPlayer = "X";
-            JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
+            //currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
             lblNewLabel.setText("Turno de " + currentPlayer);
         }
     }
+    
+    private void insertar(int posx, int posy, JButton button) {
+		if(tablero.comprobarCasilla(posx,posy)) {
+			ArrayList<Integer> posicion = new ArrayList<Integer>();
+			posicion.add(posx);
+			posicion.add(posy);
+			if(turno_jugador_1) {
+				if(posiciones_jugador_1.size()>=FICHAS_MAXIMAS) {
+					tablero.vaciarCasilla(posiciones_jugador_1.get(0).get(0), posiciones_jugador_1.get(0).get(1));
+					posiciones_jugador_1.remove(0);
+					botones_jugador_1.get(0).setText("");
+					botones_jugador_1.remove(0);
+				}
+				posiciones_jugador_1.add(posicion);
+				
+				tablero.insertarMovimiento(posx, posy, "X");
+				button.setText("X");
+				botones_jugador_1.add(button);
+			}
+			else {
+				if(posiciones_jugador_2.size()>=FICHAS_MAXIMAS) {
+					tablero.vaciarCasilla(posiciones_jugador_2.get(0).get(0), posiciones_jugador_2.get(0).get(1));
+					posiciones_jugador_2.remove(0);
+					botones_jugador_2.get(0).setText("");
+					botones_jugador_2.remove(0);
+				}
+				posiciones_jugador_2.add(posicion);
+				
+				tablero.insertarMovimiento(posx, posy, "O");
+				button.setText("O");
+				botones_jugador_2.add(button);
+			}
+			turno_jugador_1 = !turno_jugador_1;
+			//System.out.println(tablero.comprobarTablero());
+		}
+	}
 }
