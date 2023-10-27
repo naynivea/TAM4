@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,8 +22,11 @@ public class TableroPartida extends JFrame {
     private JTextField textField_1;
     private JRadioButton rdbtnNewRadioButton;
     private JRadioButton rdbtnCpu;
+	private ButtonGroup groupPlayer1;
     private JRadioButton rdbtnCpu_1;
     private JRadioButton rdbtnNewRadioButton_1;
+	private ButtonGroup groupPlayer2;
+
 
     private JButton[] buttons;
     private Tablero tablero = new Tablero();
@@ -90,6 +94,10 @@ public class TableroPartida extends JFrame {
         rdbtnCpu = new JRadioButton("CPU");
         rdbtnCpu.setBounds(590, 180, 109, 23);
         contentPane.add(rdbtnCpu);
+        
+        groupPlayer1 = new ButtonGroup();
+        groupPlayer1.add(rdbtnNewRadioButton);
+        groupPlayer1.add(rdbtnCpu);
 
         rdbtnNewRadioButton_1 = new JRadioButton("Humano");
         rdbtnNewRadioButton_1.setBounds(470, 350, 109, 23);
@@ -98,6 +106,10 @@ public class TableroPartida extends JFrame {
         rdbtnCpu_1 = new JRadioButton("CPU");
         rdbtnCpu_1.setBounds(590, 350, 109, 23);
         contentPane.add(rdbtnCpu_1);
+        
+        groupPlayer2 = new ButtonGroup();
+        groupPlayer2.add(rdbtnNewRadioButton_1);
+        groupPlayer2.add(rdbtnCpu_1);
     }
 
     private void onButtonClick(ActionEvent e) {
