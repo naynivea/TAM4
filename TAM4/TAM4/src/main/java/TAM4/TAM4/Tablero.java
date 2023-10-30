@@ -65,24 +65,12 @@ public class Tablero {
 					row = casillas[0][2]+casillas[1][1]+casillas[2][0];
 					break;
 			}
-			System.out.println(row);
 			if(row.equals("XXX")||row.equals("OOO")) {
 				found = true;
 			}
 			i++;
 		}
 		return found;
-	}
-	
-	public boolean tableroCompleto() {
-	    for (int i = 0; i < 3; i++) {
-	        for (int j = 0; j < 3; j++) {
-	            if (casillas[i][j].isEmpty()) {
-	                return false; // Si una casilla está vacía, el tablero no está completo
-	            }
-	        }
-	    }
-	    return true; // Todas las casillas están ocupadas, el tablero está completo
 	}
 
 	public void reiniciarTablero() {
