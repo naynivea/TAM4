@@ -19,6 +19,10 @@ public class Tablero {
 			casillas[x][y] = ficha;
 	}
 	
+	/* Verifica si una casilla específica en el tablero está disponible o si ya
+	 * está ocupada por una ficha. Si la casilla está vacía, la función devuelve true,
+	 * si no, devuelve false.
+	 */
 	public boolean comprobarCasilla(int x, int y) {
 		
 		if(casillas[x][y].equals("")){
@@ -32,6 +36,9 @@ public class Tablero {
 		casillas[x][y] = "";
 	}
 	
+	/*esta función comprueba si hay un ganador en el juego verificando todas las combinaciones posibles en el tablero
+	*Si encuentra un ganador, devuelve verdadero; de lo contrario, devuelve falso.
+	*/
 	public boolean comprobarTablero() {
 		String row = "";
 		int i = 0;
@@ -73,6 +80,7 @@ public class Tablero {
 		return found;
 	}
 
+	//Se utiliza para reiniciar el estado del tablero, estableciendo todas las casillas en blanco
 	public void reiniciarTablero() {
 		
 		for(int i=0;i<3.;i++) {

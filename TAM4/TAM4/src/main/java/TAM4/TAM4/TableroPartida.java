@@ -20,6 +20,9 @@ import java.util.Random;
 public class TableroPartida extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    
+    //Representa el panel principal de la ventana.
+
     private JPanel contentPane;
     private JLabel lblNewLabel;
     private JTextField textField;
@@ -31,27 +34,53 @@ public class TableroPartida extends JFrame {
     private JRadioButton rdbtnNewRadioButton_1;
 	private ButtonGroup groupPlayer2;
 	private JButton btnNewButton;
+	
+	//Botones que representan el tablero del juego
 
     private JButton[] buttons;
     
-    JRadioButton[] rdnButtonsPlayer1;
-    JRadioButton[] rdnButtonsPlayer2;    
-    private Tablero tablero = new Tablero();
-    private String currentPlayer = "";
-	private boolean turno_jugador_1 = true;
+    //Instancia de la clase Tablero, que maneja la lógica del juego
 
+    private Tablero tablero = new Tablero();
+    
+    //Almacena el nombre del jugador actual
+
+    private String currentPlayer = "";
+    
+    //Un indicador para saber si es el turno del jugador 1
+
+	private boolean turno_jugador_1 = true;
+	
+	//Boolean que indica si la partida está en curso
     private boolean partidaEnCurso = false;
+    
+    /* Variables: player1 y player2
+     * Almacenan los nombres de los jugadores
+     */
     private String player1 = "";
     private String player2 = "";
+    
+    //Almacena la ficha actual del jugador ('X' o 'O')
+
     private String ficha_actual = "X";
+
+    //Guardan las posiciones x e y ocupadas por los jugadores
 
 	private ArrayList<ArrayList<Integer>> posiciones_jugador_1 = new ArrayList<ArrayList<Integer>>();
 	private ArrayList<ArrayList<Integer>> posiciones_jugador_2 = new ArrayList<ArrayList<Integer>>();
+	
+	// Guarda los botones ocupados por las fichas de los jugadores
+	
 	private ArrayList<JButton> botones_jugador_1 = new ArrayList<JButton>();
 	private ArrayList<JButton> botones_jugador_2 = new ArrayList<JButton>();
 
+	//El número máximo de fichas que un jugador puede tener en el tablero (En este caso, 3)
+
 	private final int FICHAS_MAXIMAS = 3;
 
+	/* Constructor de la clase TableroPartida, donde se inicializa la ventana 
+	 * y se configuran los botones, campos de texto, etiquetas y grupos de botones de radio
+	 */
     public TableroPartida() {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,20 +90,37 @@ public class TableroPartida extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
+        // x y y controlan las coordenadas X e Y de la posición de los botones en la ventana
+
         buttons = new JButton[9];
         int x = 50;
         int y = 50;
+        
+        /*Crea una cuadrícula de 9 botones en la interfaz gráfica, que representa el tablero del juego Tres en Raya,
+         *y configura un ActionListener para cada botón que permitirá gestionar las acciones del jugador cuando haga
+         *clic en una celda del tablero
+         */
         for (int i = 0; i < 9; i++) {
             buttons[i] = new JButton("");
             buttons[i].setBounds(x, y, 100, 100);
             buttons[i].setFont(new Font("Arial", Font.PLAIN, 40));
             buttons[i].setFocusable(false);
             contentPane.add(buttons[i]);
+            
+            /*Se agrega un ActionListener a cada botón.
+             * Cuando se hace clic en uno de los botones, se activará el método
+             * onButtonClick(e) que manejará el evento del clic
+             */
             buttons[i].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     onButtonClick(e);
                 }
             });
+            /*
+             * El código verifica si x supera un valor de 290, lo que significa que se ha llegado al final
+             * de una fila de botones en la cuadrícula. Si es así, x se reinicia a 50, y se incrementa en 120
+             * para moverse a la siguiente fila de botones en la cuadrícula
+             */
             x += 120;
             if (x > 290) {
                 x = 50;
@@ -141,6 +187,10 @@ public class TableroPartida extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /*
+     * Maneja el evento de hacer clic en un botón del tablero.
+     * Realiza movimientos de los jugadores y verifica si hay un ganador
+     */
     private void onButtonClick(ActionEvent e) {
         JButton button = (JButton) e.getSource();
         
@@ -157,7 +207,6 @@ public class TableroPartida extends JFrame {
             insertar(row, col, button);
             
             if (tablero.comprobarTablero()) {
-            	System.out.println(currentPlayer);
                 JOptionPane.showMessageDialog(this, "¡Jugador " + currentPlayer + " gana!");
                 resetGame();
             } else {
@@ -172,6 +221,9 @@ public class TableroPartida extends JFrame {
         }
     }
 
+    /*Maneja el evento de hacer clic en el botón "Nueva Partida".
+     *  Verifica las selecciones de jugadores y comienza una nueva partida si se cumplen las condiciones
+     */
     ActionListener nuevaPartida = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			
@@ -188,7 +240,7 @@ public class TableroPartida extends JFrame {
 		}
 	};
     
-    
+	//Reinicia el juego, limpiando el tablero y restableciendo las variables de juego
     private void resetGame() {
         for (JButton button : buttons) {
             button.setText("");
@@ -203,6 +255,7 @@ public class TableroPartida extends JFrame {
 		}
     }
 
+    //Simula el movimiento de la CPU eligiendo una casilla aleatoria vacía en el tablero
     private void realizarMovimientoIA() {
         Random random = new Random();
         int index;
@@ -224,6 +277,9 @@ public class TableroPartida extends JFrame {
         }
     }
     
+    /*
+     * Inserta una ficha en el tablero si la casilla está disponible
+     */
     private void insertar(int posx, int posy, JButton boton) {
 		if(tablero.comprobarCasilla(posx,posy)) {
 			if(turno_jugador_1) {
@@ -236,6 +292,9 @@ public class TableroPartida extends JFrame {
 		}
 	}
     
+    /*Agrega una ficha a la lista de posiciones del jugador y
+     * actualiza el tablero y el botón con la ficha correspondiente
+     */
     private void addFichaJugador(ArrayList<ArrayList<Integer>> posiciones_jugador, ArrayList<JButton> botones_jugador, JButton boton, int posx, int posy) {
 		ArrayList<Integer> posicion = new ArrayList<Integer>();
 		posicion.add(posx);
@@ -253,6 +312,8 @@ public class TableroPartida extends JFrame {
 		botones_jugador.add(boton);
     }
     
+    //Limpia las listas de posiciones y botones de los jugadores
+
     private void reiniciarJugadores() {
     	posiciones_jugador_1.clear();
     	botones_jugador_1.clear();
@@ -260,6 +321,10 @@ public class TableroPartida extends JFrame {
     	botones_jugador_2.clear();
     }
     
+    /*Verifica que se hayan ingresado los nombres de los jugadores 
+     * y se haya seleccionado el tipo de jugador (humano o CPU) para ambos jugadores con, como máximo, 1 jugador CPU.
+     * Muestra mensajes en la etiqueta lblNewLabel si hay algún error
+     */
     private boolean comprobarInicioPartida() {
     	
 		if(!textField.getText().equals("") && !textField_1.getText().equals("")) {
