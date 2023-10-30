@@ -1,6 +1,7 @@
 package TAM4.TAM4;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -36,7 +37,7 @@ public class TableroPartida extends JFrame {
     JRadioButton[] rdnButtonsPlayer1;
     JRadioButton[] rdnButtonsPlayer2;    
     private Tablero tablero = new Tablero();
-    private String currentPlayer = ""; // Jugador 1 inicia
+    private String currentPlayer = "";
 	private boolean turno_jugador_1 = true;
 
     private boolean partidaEnCurso = false;
@@ -79,6 +80,8 @@ public class TableroPartida extends JFrame {
         for (int i = 0; i < 9; i++) {
             buttons[i] = new JButton("");
             buttons[i].setBounds(x, y, 100, 100);
+            buttons[i].setFont(new Font("Arial", Font.PLAIN, 40));
+            buttons[i].setFocusable(false);
             contentPane.add(buttons[i]);
             buttons[i].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -108,10 +111,12 @@ public class TableroPartida extends JFrame {
 
         rdbtnNewRadioButton = new JRadioButton("Humano");
         rdbtnNewRadioButton.setBounds(470, 209, 109, 23);
+        rdbtnNewRadioButton.setFocusable(false);
         contentPane.add(rdbtnNewRadioButton);
 
         rdbtnCpu = new JRadioButton("CPU");
         rdbtnCpu.setBounds(590, 209, 109, 23);
+        rdbtnCpu.setFocusable(false);
         contentPane.add(rdbtnCpu);
         
         groupPlayer1 = new ButtonGroup();
@@ -120,10 +125,12 @@ public class TableroPartida extends JFrame {
 
         rdbtnNewRadioButton_1 = new JRadioButton("Humano");
         rdbtnNewRadioButton_1.setBounds(470, 322, 109, 23);
+        rdbtnNewRadioButton_1.setFocusable(false);
         contentPane.add(rdbtnNewRadioButton_1);
 
         rdbtnCpu_1 = new JRadioButton("CPU");
         rdbtnCpu_1.setBounds(590, 322, 109, 23);
+        rdbtnCpu_1.setFocusable(false);
         contentPane.add(rdbtnCpu_1);
         
         groupPlayer2 = new ButtonGroup();
@@ -133,6 +140,7 @@ public class TableroPartida extends JFrame {
         btnNewButton = new JButton("Nueva Partida");
         btnNewButton.setBounds(530, 57, 120, 26);
 		btnNewButton.addActionListener(nuevaPartida);
+		btnNewButton.setFocusable(false);
         contentPane.add(btnNewButton);
         
         JLabel lblJguador = new JLabel("Jugador 1:");
@@ -150,8 +158,6 @@ public class TableroPartida extends JFrame {
         JButton button = (JButton) e.getSource();
         
         if (button.getText().isEmpty() && partidaEnCurso) {
-        	//String sign = (currentPlayer.equals(player1)) ? "X" : "O";
-            //button.setText(sign);
             int index = -1;
             for (int i = 0; i < 9; i++) {
                 if (button == buttons[i]) {
@@ -161,19 +167,17 @@ public class TableroPartida extends JFrame {
             }
             int row = index / 3;
             int col = index % 3;
-            //tablero.insertarMovimiento(row, col, sign);
             insertar(row, col, button);
+            
             if (tablero.comprobarTablero()) {
+            	System.out.println(currentPlayer);
                 JOptionPane.showMessageDialog(this, "¡Jugador " + currentPlayer + " gana!");
                 resetGame();
-            } else if (tablero.tableroCompleto()) {
-                JOptionPane.showMessageDialog(this, "¡Empate!");
-                resetGame();
             } else {
-                //currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
-                //JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
+            	ficha_actual = ficha_actual.equals("X") ? "O" : "X";
+            	currentPlayer = currentPlayer.equals(player1) ? player2 : player1; 
                 lblNewLabel.setText("Turno de " + currentPlayer);
-                if (rdbtnCpu.isSelected() && currentPlayer.equals("O")) {
+                if (rdbtnCpu.isSelected() && ficha_actual.equals("X") || rdbtnCpu_1.isSelected() && ficha_actual.equals("O")) {
                     // Turno de la IA
                     realizarMovimientoIA();
                 }
@@ -190,6 +194,9 @@ public class TableroPartida extends JFrame {
 				player2 = textField_1.getText();
 				partidaEnCurso = true;
 				lblNewLabel.setText("Turno de "+ currentPlayer);
+				if (rdbtnCpu.isSelected() && ficha_actual.equals("X")) {
+                    realizarMovimientoIA();
+				}
 			}
 		}
 	};
@@ -203,8 +210,10 @@ public class TableroPartida extends JFrame {
         reiniciarJugadores();
         currentPlayer = player1;
         ficha_actual ="X";
-        //JLabel lblNewLabel = (JLabel) contentPane.getComponent(8);
         lblNewLabel.setText("Turno de " + currentPlayer);
+		if (rdbtnCpu.isSelected() && ficha_actual.equals("X")) {
+            realizarMovimientoIA();
+		}
     }
 
     private void realizarMovimientoIA() {
@@ -213,21 +222,17 @@ public class TableroPartida extends JFrame {
         do {
             index = random.nextInt(9);
         } while (!buttons[index].getText().isEmpty());
-        //buttons[index].setText("O");
 
         int row = index / 3;
         int col = index % 3;
-        //tablero.insertarMovimiento(row, col, "O");
         insertar(row, col, buttons[index]);
         
         if (tablero.comprobarTablero()) {
             JOptionPane.showMessageDialog(this, "La IA gana!");
             resetGame();
-        } else if (tablero.tableroCompleto()) {
-            JOptionPane.showMessageDialog(this, "Empate!");
-            resetGame();
         } else {
-            //currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
+        	ficha_actual = ficha_actual.equals("X") ? "O" : "X";
+        	currentPlayer = currentPlayer.equals(player1) ? player2 : player1; 
             lblNewLabel.setText("Turno de " + currentPlayer);
         }
     }
@@ -236,13 +241,9 @@ public class TableroPartida extends JFrame {
 		if(tablero.comprobarCasilla(posx,posy)) {
 			if(turno_jugador_1) {
 				addFichaJugador(posiciones_jugador_1, botones_jugador_1, boton, posx, posy);
-				currentPlayer = player2;
-				ficha_actual = "O";
 			}
 			else {
 				addFichaJugador(posiciones_jugador_2, botones_jugador_2, boton, posx, posy);
-				currentPlayer = player1;
-				ficha_actual = "X";
 			}
 			turno_jugador_1 = !turno_jugador_1;
 		}
