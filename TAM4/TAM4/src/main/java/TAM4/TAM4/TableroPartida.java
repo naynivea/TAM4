@@ -52,19 +52,6 @@ public class TableroPartida extends JFrame {
 
 	private final int FICHAS_MAXIMAS = 3;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    TableroPartida frame = new TableroPartida();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     public TableroPartida() {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
